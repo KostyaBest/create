@@ -1,0 +1,150 @@
+#!/bin/python3
+
+import os
+from sys import argv
+from subprocess import run
+
+#PHP
+def create_lumen_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    run(["composer","create-project","--prefer-dist","laravel/lumen",name])
+    print("To Run print: php -S localhost:8000 -t public")
+
+def create_laravel_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    run(["composer","create-project","laravel/laravel",name])
+
+def create_laravel_breeze_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    run(["composer","create-project","laravel/laravel",name])
+    os.chdir(name)
+    run(["composer","require","laravel/breeze","--dev"])
+    run(["php","artisan","breeze:install"])
+    run(["php","artisan","migrate"])
+    run(["npm","install"])
+    run(["npm","run","dev"])
+
+def create_symfony_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    run(["composer","create-project","symfony/skeleton",name])
+
+#RUST
+def create_rust_tauri_project(arguments:list)->None:
+    run(['npm','create','tauri-app@latest'])
+def create_yew_project(arguments:list)->None:
+    run(['cargo','generate','--git','https://github.com/yewstack/yew-trunk-minimal-template'])
+
+#PYTHON
+def create_python_module(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    if os.path.exists(name):
+        print("Such folder already exist")
+        return
+    os.mkdir(name)
+    with open(f"{name}/__init__.py","w") as f:
+        pass
+    with open(f"{name}/setup.py","w") as f:
+        f.writelines(["from setuptools import setup, find_packges\n",
+                    "def read_requirements(file):\n",
+                    "with open(file) as f:\n",
+                    "return f.read().splitlines()\n",
+                    "\n",
+                    "def read_file(file):\n",
+                    "with open(file) as f:\n",
+                    "return f.read()\n",
+                    "\n",
+                    "long_description = read_file(\"README.rst\")\n",
+                    "version = read_file(\"VERSION\")\n",
+                    "requirements = read_requirements(\"requirements.txt\")\n",
+                    "setup(\n"
+                    "name = 'examplepackage',\n",
+                    "version = version,\n",
+                    "author = '',\n",
+                    "author_email = '',\n",
+                    "url = 'git url',\n",
+                    "description = 'A simple example python package.',\n"
+                    "long_description_content_type = \"text/x-rst\",\n", 
+                    # If this causes a warning, upgrade your setuptools package
+                    "long_description = long_description,\n",
+                    "license = \"MIT license\",\n",
+                    "packages = find_packages(exclude=[\"test\"]),\n",  # Don't include test directory in binary distribution
+                    "install_requires = requirements,\n",
+                    "classifiers=[\n",
+                    "\"Programming Language :: Python :: 3\",\n",
+                    "\"License :: OSI Approved :: MIT License\",\n",
+                    "\"Operating System :: OS Independent\",\n",
+                    "]\n",  # Update these accordingly
+    ])
+
+#NVIM
+def create_nvimrc(arguments:list)->None:
+    #TODO make templates for this commands
+    data=["",
+          "",
+          "\"build project and run",
+          "noremap <F5> <Esc>:w<Enter>:!cargo test<Enter>",
+          "\"just build project",
+          "noremap <F6> <Esc>:w<Enter>:!cargo build<Enter>",
+    ]
+    for i in range(len(data)):
+        data[i] +="\n"
+    with open(f".nvimrc","a") as f:
+        f.writelines(data)
+
+#GENERAL
+def _ask_valid_value(name:str)->str:
+    print(f"Input valid {name}:")
+    return input()
+
+def help(arguments:list)->None:
+    print("NAME-COMMAND:")
+    print()
+    for name,command in COMMANDS.items():
+        print(f"{name}-{command.__name__}")
+
+COMMANDS={
+    #PHP
+    "lumen":create_lumen_project,
+    "laravel":create_laravel_project,
+    "symfony":create_symfony_project,
+    "b":create_laravel_breeze_project,
+    "breeze":create_laravel_breeze_project,
+    #RUST
+    "tauri":create_rust_tauri_project,
+    "yew":create_yew_project,
+    #PYTHON
+    "py_module":create_python_module,
+    #NVIM
+    "nvimrc":create_nvimrc,
+    "n":create_nvimrc,
+    #GENERAL
+    "help":help,
+}
+
+def main()->None:
+    args=argv[1::]
+    if not args:
+        COMMANDS["help"]([])
+        return
+    if args[0] in COMMANDS:
+        COMMANDS[args[0]](args[1::])
+        return
+    COMMANDS["help"]([])
+
+if __name__ == "__main__":
+    main()
