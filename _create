@@ -45,12 +45,7 @@ def create_yii2_project(arguments:list)->None:
         name = _ask_valid_name("project name")
     else:
         name = arguments[0]
-    run(["git","clone","git@github.com:yiisoft/yii2-app-basic.git
-"])
-    os.rename("yii2-app-basic",name)
-    os.rmdir(f"./{name}/.git")
-    os.rmdir(f"./{name}/.github")
-
+    run(["composer", "create-project" ,"--prefer-dist", f"yiisoft/yii2-app-basic {name}"])
 #RUST
 def create_rust_tauri_project(arguments:list)->None:
     run(['npm','create','tauri-app@latest'])
