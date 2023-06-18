@@ -40,6 +40,17 @@ def create_symfony_project(arguments:list)->None:
         name = arguments[0]
     run(["composer","create-project","symfony/skeleton",name])
 
+def create_yii2_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_name("project name")
+    else:
+        name = arguments[0]
+    run(["git","clone","git@github.com:yiisoft/yii2-app-basic.git
+"])
+    os.rename("yii2-app-basic",name)
+    os.rmdir(f"./{name}/.git")
+    os.rmdir(f"./{name}/.github")
+
 #RUST
 def create_rust_tauri_project(arguments:list)->None:
     run(['npm','create','tauri-app@latest'])
@@ -122,6 +133,7 @@ COMMANDS={
     "lumen":create_lumen_project,
     "laravel":create_laravel_project,
     "symfony":create_symfony_project,
+    "yii":create_yii2_project,
     "b":create_laravel_breeze_project,
     "breeze":create_laravel_breeze_project,
     #RUST
