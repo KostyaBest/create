@@ -38,18 +38,24 @@ def create_laravel_breeze_project(arguments:list)->None:
 
 def create_symfony_project(arguments:list)->None:
     if len(arguments) < 1:
-        name = _ask_valid_name("project name")
+        name = _ask_valid_value("project name")
     else:
         name = arguments[0]
     run(["composer","create-project","symfony/skeleton",name])
 
 def create_yii2_project(arguments:list)->None:
     if len(arguments) < 1:
-        name = _ask_valid_name("project name")
+        name = _ask_valid_value("project name")
     else:
         name = arguments[0]
-    #run(["composer", "create-project","--prefer-dist yiisoft/yii2-app-basic",f"{name}"])
     os.system(f"composer create-project --prefer-dist yiisoft/yii2-app-basic {name}")
+
+def create_yii2_advanced_project(arguments:list)->None:
+    if len(arguments) < 1:
+        name = _ask_valid_value("project name")
+    else:
+        name = arguments[0]
+    os.system(f"composer create-project --prefer-dist yiisoft/yii2-app-advanced {name}")
 #RUST
 def create_rust_tauri_project(arguments:list)->None:
     run(['npm','create','tauri-app@latest'])
@@ -133,6 +139,7 @@ COMMANDS={
     "laravel":create_laravel_project,
     "symfony":create_symfony_project,
     "yii":create_yii2_project,
+    "yiia":create_yii2_advanced_project,
     "b":create_laravel_breeze_project,
     "breeze":create_laravel_breeze_project,
     #RUST
