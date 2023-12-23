@@ -121,7 +121,7 @@ def create_nvimrc(arguments:list)->None:
         data[i] +="\n"
     with open(f".nvimrc","a") as f:
         f.writelines(data)
-
+#C
 #GENERAL
 def _ask_valid_value(name:str)->str:
     print(f"Input valid {name}:")
@@ -150,6 +150,7 @@ COMMANDS={
     #NVIM
     "nvimrc":create_nvimrc,
     "n":create_nvimrc,
+    #C
     #GENERAL
     "help":help,
 }
